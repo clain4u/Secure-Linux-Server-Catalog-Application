@@ -13,17 +13,20 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-@app.route('/restaurants/')
-def catgories():
+@app.route('/categories/')
+def categories():
     category = session.query(Category).all()
-    items = session.query(Products).limit(2)
+    # joining using ForeignKey relationship to get parent category
+    # reverse ordering by id to get the last 10 items entries
+    items = session.query(Products).join(Category).order_by(
+            "Products.id desc").limit(10)
     return render_template('home.html', category=category, items=items)
 
 
-@app.route('/restaurants/JSON')
+@app.route('/categories/JSON')
 def catgoriesJSON():
     category = session.query(Category).all()
-    items = session.query(Products).limit(2)
+    items = session.query(Products).order_by("id desc")
     return jsonify(categories=[i.serialize for i in category])
 
 
