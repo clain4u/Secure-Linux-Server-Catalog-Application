@@ -31,12 +31,14 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
+              {% for cat in category %}
               <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link" href="#">
                   <span data-feather="home"></span>
-                  Dashboard <span class="sr-only">(current)</span>
+                  {{cat.name}}
                 </a>
               </li>
+              {% endfor %}
             </ul>
           </div>
         </nav>
