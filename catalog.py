@@ -15,12 +15,12 @@ session = DBSession()
 
 @app.route('/catalog/')
 def categories():
-    category = session.query(Category).all()
+    categories = session.query(Category).all()
     # joining using ForeignKey relationship to get parent category
     # reverse ordering by id to get the last 10 items entries
-    items = session.query(Products).join(Category).order_by(
+    products = session.query(Products).join(Category).order_by(
             "Products.id desc").limit(10)
-    return render_template('home.html', category=category, items=items)
+    return render_template('home.html', categories=categories, products=products)
 
 
 @app.route('/categories/JSON', methods=['GET'])
@@ -31,9 +31,10 @@ def catgoriesJSON():
 
 @app.route('/catalog/<string:category_name>/<int:category_id>/view/')
 def categoryView(category_name, category_id):
+    categories = session.query(Category).all()
     products = session.query(Products).filter_by(category_id=category_id).all()
     return render_template('category.html', category=category_name,
-                           products=products)
+                           products=products, categories=categories)
 
 
 @app.route('/products/new/', methods=['GET', 'POST'])
