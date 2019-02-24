@@ -37,6 +37,18 @@ def categoryView(category_name, category_id):
                            products=products, categories=categories)
 
 
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/view/')
+def ProductView(category_name, product_name, product_id):
+    categories = session.query(Category).all()
+    product = session.query(Products).filter_by(id=product_id).first()
+    return render_template('product.html', category=category_name,
+                           product=product, categories=categories)
+
+
+
+
+
 @app.route('/products/new/', methods=['GET', 'POST'])
 def newProduct():
     if request.method == 'POST':
