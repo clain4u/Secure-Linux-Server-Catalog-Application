@@ -1,4 +1,7 @@
-@media (min-width: 1200px) {
+img{
+  width:100%;
+  height: auto;
+}
   .modal-lg {
     margin: auto;
   }
@@ -6,7 +9,7 @@
     min-height: 70px;
     color:#3d5170;
   }
-}
+
 .sidebar-heading {
   background: #000;
   color: #fff;
@@ -21,7 +24,9 @@
 .nav-link.active, .nav-link:hover{
   color:#1dcaff !important;
 }
-
+.product-price{
+  font-size: 22px;
+}
 /* Product grid rules */
 .items {
   display: flex;
@@ -44,6 +49,11 @@
   border: 1px dashed #ccc;
   margin: auto;
   margin-bottom: 10px
+}
+.service-image-left{
+  border: 1px dashed #ccc;
+  width:100%;
+  height: auto;
 }
 @media (min-width: 410px) {
   .items .item {
