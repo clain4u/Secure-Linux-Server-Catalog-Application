@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for, jsonify, request
+from flask import Flask, render_template, url_for, jsonify, request, flash, redirect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from database_setup import Base, Category, Products
 app = Flask(__name__)
-
+app.secret_key = '\xd3\x97I\rd.`\xee\xfc\xf2\xdf\xf2'
 
 engine = create_engine('sqlite:///catalog.db', connect_args={
          'check_same_thread': False})
@@ -20,7 +20,8 @@ def categories():
     # reverse ordering by id to get the last 10 items entries
     products = session.query(Products).join(Category).order_by(
             "Products.id desc").limit(10)
-    return render_template('home.html', categories=categories, products=products)
+    return render_template('home.html', categories=categories,
+                           products=products)
 
 
 @app.route('/categories/JSON', methods=['GET'])
@@ -39,14 +40,40 @@ def categoryView(category_name, category_id):
 
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
            + '<int:product_id>/view/')
-def ProductView(category_name, product_name, product_id):
+def productView(category_name, product_name, product_id):
     categories = session.query(Category).all()
     product = session.query(Products).filter_by(id=product_id).first()
     return render_template('product.html', category=category_name,
                            product=product, categories=categories)
 
 
-
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/edit/', methods=['GET', 'POST'])
+def productEdit(category_name, product_name, product_id):
+    if request.method == 'POST':
+        myProductQuery = session.query(Products).filter_by(
+                         id=request.form.get('hidProductID')).first()
+        if myProductQuery != []:
+            myProductQuery.name = request.form.get('txtName')
+            myProductQuery.category_id = request.form.get('selCategory')
+            myProductQuery.price = request.form.get('txtPrice')
+            myProductQuery.description = request.form.get('txtDescription')
+            session.add(myProductQuery)
+            session.commit()
+            flash('Product updated successfully')
+            categories = session.query(Category).all()
+            product = session.query(Products).filter_by(
+                      id=product_id).join(Category).first()
+            returnURL = '''/catalog/{0}/{1}/{2}/edit'''
+            return redirect(returnURL.format(product.category.name,
+                            product.name, product.id))
+            # return render_template('edit.html', category=category_name,
+            # product=product, categories=categories)
+    else:
+        categories = session.query(Category).all()
+        product = session.query(Products).filter_by(id=product_id).first()
+        return render_template('edit.html', category=category_name,
+                               product=product, categories=categories)
 
 
 @app.route('/products/new/', methods=['GET', 'POST'])
