@@ -24,14 +24,15 @@ def add_header(r):
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
     r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
+    r.headers['Cache-Control'] = 'public, max-age=0, no-store, must-revalidate'
     return r
 
 
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
 def not_found(e):
-    return render_template("404.html")
+    categories = session.query(Category).all()
+    return render_template("404.html", categories=categories)
 
 
 @app.route('/catalog/')
@@ -64,8 +65,11 @@ def categoryView(category_name, category_id):
 def productView(category_name, product_name, product_id):
     categories = session.query(Category).all()
     product = session.query(Products).filter_by(id=product_id).first()
-    return render_template('product.html', category=category_name,
-                           product=product, categories=categories)
+    if product is not None:  # at least one matching product
+        return render_template('product.html', category=category_name,
+                               product=product, categories=categories)
+    else:
+        return redirect('404')
 
 
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
