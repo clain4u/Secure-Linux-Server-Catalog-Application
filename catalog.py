@@ -28,6 +28,12 @@ def add_header(r):
     return r
 
 
+@app.errorhandler(404)
+# inbuilt function which takes error as parameter
+def not_found(e):
+    return render_template("404.html")
+
+
 @app.route('/catalog/')
 def categories():
     categories = session.query(Category).all()

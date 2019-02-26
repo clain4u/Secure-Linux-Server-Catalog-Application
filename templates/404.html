@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Item Catalog Application">
+  <meta name="author" content="Clain Dsilva">
+
+  <title>Item Catalog Application</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{url_for('static', filename='bootstrap.min.css')}}" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="{{url_for('static', filename='dashboard.css')}}" rel="stylesheet">
+  <!-- FontAwesome library for icons-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><h2>Catalog App</h2></a>
+    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="#">Sign in</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-dark sidebar">
+        <div class="sidebar-sticky">
+          <h4 class="sidebar-heading">Browse Categories</h4>
+          <ul class="nav flex-column">
+            {% for cat in categories %}
+            <li class="nav-item">
+              <a class="nav-link" href="/catalog/{{cat.name}}/{{cat.id}}/view/">
+                <i class="fas fa-book"></i>
+                {{cat.name}}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2">404 oops that page does not exist!!</h1>
+        </div>
+
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">You have made a wrong turn</h4>
+          <p> The page you requested does not exist. But that's ok, select a category form the menu to get back to track?</p>
+          <hr>
+          <p> Or visit the home page <a class="btn btn-primary btn-md" href="/catalog"> Visit Home </a>
+        </div>
+      <div class="items">
+        {% for product in products %}
+        <div class="item">
+          <img src="http://placehold.jp/fffff/cccccc/188x200.png?text={{products.name}}+image">
+          <div class="productName"><h3>{{product.name}}</h3></div>
+          <div class="productPrice">{{product.price}}</div>
+          <div class="productCategory">category: <span class="badge badge-light">{{product.category.name}}</span></div>
+          <a href="/catalog/{{product.category.name}}/{{product.name}}/{{product.id}}/view/" class="btn btn-sm btn-primary btn-block">View Product</a>
+        </div>
+        {% endfor %}
+      </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal fade" id="appModal" tabindex="-1" role="dialog" aria-labelledby="appModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap core JavaScript -->
+  <script src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+  <script src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+  <script src="{{url_for('static', filename='catlog-app.script-engine.0.1.js')}}"></script>
+</body>
+</html>
