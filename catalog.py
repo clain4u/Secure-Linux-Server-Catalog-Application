@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for, jsonify, request, flash, redirect
+from flask import Flask, render_template, url_for, jsonify
+from flask import request, flash, redirect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from database_setup import Base, Category, Products
@@ -91,6 +92,28 @@ def newProduct():
     else:
         categories = session.query(Category).all()
         return render_template('_add-product.html', categories=categories)
+
+
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/delete/', methods=['GET', 'POST'])
+def productDelete(category_name, product_name, product_id):
+    if request.method == 'POST':
+        myProductQuery = session.query(Products).filter_by(
+                         id=request.form.get('hidProductID')).first()
+        if myProductQuery != []:
+            productToDelete = myProductQuery.name
+            session.delete(myProductQuery)
+            session.commit()
+            flash('Product "'+productToDelete+'" deleted from catalog.')
+            categories = session.query(Category).all()
+            return render_template('delete.html', category=category_name,
+                                   product=request.form.get('txtName'),
+                                   categories=categories)
+    else:
+        categories = session.query(Category).all()
+        product = session.query(Products).filter_by(id=product_id).first()
+        return render_template('delete.html', category=category_name,
+                               product=product, categories=categories)
 
 
 if __name__ == '__main__':
