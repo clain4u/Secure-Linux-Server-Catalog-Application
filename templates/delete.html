@@ -18,13 +18,27 @@
 
 <body>
   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><h2>Catalog App</h2></a>
-    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/catalog/"><h2>Catalog App</h2></a>
+
+    {% if user.username|length  %} <!-- if user session exist -->
+    <ul class="navbar-nav px-3 pop"  data-container="body" data-toggle="popover" data-placement="left"
+    data-content="<span class='logout' onclick='doLogout'>Log Out</span>"  data-original-title="" title="">
+      <li class="nav-item text-nowrap text-center">
+        <div class="profileImage">
+          <img src="{{user['picture'] }}" alt="User Profile Image" />
+        </div>
+      </li>
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="#">{{user['username'] }}</a>
+      </li>
+    </ul>
+    {% else %}
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
         <a class="nav-link" href="#">Sign in</a>
       </li>
     </ul>
+    {% endif %}
   </nav>
 
   <div class="container-fluid">
