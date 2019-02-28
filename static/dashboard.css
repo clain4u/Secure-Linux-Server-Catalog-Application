@@ -27,6 +27,21 @@ img{
 .product-price{
   font-size: 22px;
 }
+.profileImage{
+  width:50px;
+  margin:auto;
+  margin-top:10px
+}
+.profileImage img{
+  border-radius: 25px;
+}
+.navbar-nav li{
+  float: right;
+}
+.btn-secondary{
+  background: #000;
+  border: 1px solid #000;
+}
 /* Product grid rules */
 .items {
   display: flex;
