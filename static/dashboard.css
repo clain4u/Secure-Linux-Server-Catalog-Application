@@ -42,6 +42,20 @@ img{
   background: #000;
   border: 1px solid #000;
 }
+h1 small{
+  font-size: 14px !important;
+}
+.container-fluid nav{
+  display: table-cell;
+  padding-bottom: 1000px;
+  margin-bottom: -1000px;
+}
+
+.logout:hover{
+  cursor:pointer;
+  color:#0069d9;
+  text-decoration: underline;
+}
 /* Product grid rules */
 .items {
   display: flex;
