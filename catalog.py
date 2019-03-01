@@ -11,6 +11,7 @@ from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 import requests
+import urllib
 
 app = Flask(__name__)
 
@@ -122,7 +123,7 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;'
+    output += ' " style = "width: 100px; height: 100px;border-radius: 50px;'
     output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
@@ -163,9 +164,16 @@ def gdisconnect():
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
+    # url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    # h = httplib2.Http()
+    # result = h.request(url, 'POST')[0]
+    http = httplib2.Http()
+    body = {'token': access_token}
+    result = http.request(
+             "https://accounts.google.com/o/oauth2/revoke",
+             method="POST",
+             headers={'Content-type': 'application/x-www-form-urlencoded'},
+             body=urllib.urlencode(body))[0]
 
     if result['status'] == '200':
         # Reset the user's sesson.
@@ -174,14 +182,12 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('You have successfully logged out')
+        redirect('/catalog/')
     else:
         # For whatever reason, the given token was invalid.
         response = make_response(
-            json.dumps('Failed to revoke token for given user.', 400))
+            json.dumps(result, 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -208,6 +214,12 @@ def not_found(e):
                            user=login_session)
 
 
+# routes defalut site root [localhost:5000] to app home [/catalog/]
+@app.route('/')
+def routeToHome():
+    return redirect('/catalog/')
+
+
 @app.route('/catalog/')
 def categories():
     categories = session.query(Category).all()
@@ -227,9 +239,10 @@ def catgoriesJSON():
 
 @app.route('/catalog/<string:category_name>/<int:category_id>/view/')
 def categoryView(category_name, category_id):
+    category = session.query(Category).filter_by(id=category_id).first()
     categories = session.query(Category).all()
     products = session.query(Products).filter_by(category_id=category_id).all()
-    return render_template('category.html', category=category_name,
+    return render_template('category.html', category=category,
                            products=products, categories=categories,
                            user=login_session)
 
@@ -276,9 +289,10 @@ def productEdit(category_name, product_name, product_id):
                                product=product, categories=categories,
                                user=login_session)
 
+
 @app.route('/catalog/<string:category_name>/'
            + '<int:category_id>/edit/', methods=['GET', 'POST'])
-def categoryEdit(category_name, categopry_id):
+def categoryEdit(category_name, category_id):
     if request.method == 'POST':
         myCategoryQuery = session.query(Category).filter_by(
                          id=request.form.get('hidCategoryID')).first()
@@ -288,14 +302,12 @@ def categoryEdit(category_name, categopry_id):
             session.commit()
             flash('Category updated successfully')
             categories = session.query(Category).all()
-            returnURL = '''/catalog/{0}/{1}/{2}/edit'''
+            returnURL = '''/catalog/{0}/{1}/edit'''
             return redirect(returnURL.format(myCategoryQuery.name,
                             myCategoryQuery.id))
-            # return render_template('edit.html', category=category_name,
-            # product=product, categories=categories)
     else:
         categories = session.query(Category).all()
-        category = session.query(Category).filter_by(id=categopry_id).first()
+        category = session.query(Category).filter_by(id=category_id).first()
         return render_template('edit-category.html', category=category,
                                categories=categories, user=login_session)
 
