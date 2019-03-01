@@ -37,3 +37,7 @@ $(function(){
           }, 300);
   });
 });
+
+function doLogout(){
+  document.location.href = '/gdisconnect';
+}
