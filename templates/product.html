@@ -17,12 +17,12 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+  <nav class="navbar navbar-dark  bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/catalog/"><h2>Catalog App</h2></a>
 
     {% if user.username|length  %} <!-- if user session exist -->
     <ul class="navbar-nav px-3 pop"  data-container="body" data-toggle="popover" data-placement="left"
-    data-content="<span class='logout' onclick='doLogout'>Log Out</span>"  data-original-title="" title="">
+    data-content="<span class='logout' onclick='doLogout()'>Log Out</span>">
       <li class="nav-item text-nowrap text-center">
         <div class="profileImage">
           <img src="{{user['picture'] }}" alt="User Profile Image" />
@@ -35,7 +35,7 @@
     {% else %}
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Sign in</a>
+        <a class="nav-link" href="/login">Sign in</a>
       </li>
     </ul>
     {% endif %}
@@ -49,7 +49,7 @@
           <ul class="nav flex-column">
             {% for cat in categories %}
             <li class="nav-item" >
-              <a class="nav-link {% if category ==cat.name %} active {% endif %}" href="/catalog/{{cat.name}}/{{cat.id}}/view/">
+              <a class="nav-link {% if cat.id==product.category_id %} active {% endif %}" href="/catalog/{{cat.name}}/{{cat.id}}/view/">
                 <i class="fas fa-book"></i>
                 {{cat.name}}
               </a>
@@ -63,9 +63,14 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 class="h2"></h1>
           <div class="btn-toolbar mb-2 mb-md-0">
+            {% if user.username|length  %} <!-- if user session exist -->
             <div class="btn-group mr-2">
-              <button class="btn btn-primary btn-sm" onclick="modalPop('newProduct')">+ Create New Product</button>
+              <button class="btn btn-secondary btn-sm" onclick="modalPop('newCategory')">+ Add New Category</button>
             </div>
+            <div class="btn-group mr-2">
+              <button class="btn btn-primary btn-sm" onclick="modalPop('newProduct')">+ Add New Product</button>
+            </div>
+            {% endif %}
           </div>
         </div>
 
@@ -128,6 +133,7 @@
   <!-- Bootstrap core JavaScript -->
   <script src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
   <script src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+  <script src="{{url_for('static', filename='bootstrap.bundle.min.js')}}"></script>
   <script src="{{url_for('static', filename='catlog-app.script-engine.0.1.js')}}"></script>
 </body>
 </html>

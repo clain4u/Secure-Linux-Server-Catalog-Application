@@ -18,7 +18,7 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+  <nav class="navbar navbar-dark  bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/catalog/"><h2>Catalog App</h2></a>
   </nav>
 
@@ -39,12 +39,6 @@
           </div>
         </div>
 </div>
-  <div class="modal fade" id="appModal" tabindex="-1" role="dialog" aria-labelledby="appModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-      </div>
-    </div>
-  </div>
   <!-- Bootstrap core JavaScript -->
   <script src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
   <script src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
@@ -63,8 +57,10 @@
         contentType: 'application/octet-stream; charset=utf-8',
         success: function(result) {
           // Handle or verify the server response if necessary.
+
           if (result) {
-            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+            // replace the signin
+            $('.card-body').html('Login Successful!</br>'+ result + '</br>Redirecting...');
            setTimeout(function() {
             window.location.href = "/catalog";
            }, 4000);

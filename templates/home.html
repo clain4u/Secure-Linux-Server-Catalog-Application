@@ -17,11 +17,24 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+  <nav class="navbar navbar-dark  bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/catalog/"><h2>Catalog App</h2></a>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     {% if user.username|length  %} <!-- if user session exist -->
     <ul class="navbar-nav px-3 pop"  data-container="body" data-toggle="popover" data-placement="left"
-    data-content="<span class='logout' onclick='doLogout'>Log Out</span>"  data-original-title="" title="">
+    data-content="<span class='logout' onclick='doLogout()'>Log Out</span>" >
       <li class="nav-item text-nowrap text-center">
         <div class="profileImage">
           <img src="{{user['picture'] }}" alt="User Profile Image" />
@@ -34,7 +47,7 @@
     {% else %}
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Sign in</a>
+        <a class="nav-link" href="/login">Sign in</a>
       </li>
     </ul>
     {% endif %}
