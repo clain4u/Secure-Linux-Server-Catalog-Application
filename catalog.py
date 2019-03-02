@@ -390,7 +390,8 @@ def productDelete(category_name, product_name, product_id):
             session.commit()
             flash('Product "'+productToDelete+'" deleted from catalog.')
             categories = session.query(Category).all()
-            return render_template('delete-product.html', category=category_name,
+            return render_template('delete-product.html',
+                                   category=category_name,
                                    product=request.form.get('txtName'),
                                    categories=categories, user=login_session)
     else:  # GET displays the UI page to confirm delete
