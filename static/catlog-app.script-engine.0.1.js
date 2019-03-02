@@ -22,22 +22,33 @@ function modalPop(which){
 $(function(){
   // Generic popover utility function to display roll over info messages
   $(".pop").popover({ trigger: "manual" , html: true, animation:false})
-      .on("mouseenter", function () {
-          var _this = this;
-          $(this).popover("show");
-          $(".popover").on("mouseleave", function () {
-              $(_this).popover('hide');
-          });
-      }).on("mouseleave", function () {
-          var _this = this;
-          setTimeout(function () {
-              if (!$(".popover:hover").length) {
-                  $(_this).popover("hide");
-              }
-          }, 300);
+  .on("mouseenter", function () {
+    var _this = this;
+    $(this).popover("show");
+    $(".popover").on("mouseleave", function () {
+      $(_this).popover('hide');
+    });
+  }).on("mouseleave", function () {
+    var _this = this;
+    setTimeout(function () {
+      if (!$(".popover:hover").length) {
+        $(_this).popover("hide");
+      }
+    }, 300);
   });
 });
 
 function doLogout(){
-  document.location.href = '/gdisconnect';
+  $.ajax({
+    url:site_url+'/gdisconnect',
+    type:"GET",
+    data:'',
+    contentType:"application/json; charset=utf-8",
+    dataType:"json",
+    success: function(result){
+      if(result.status == 'Disconnected'){
+        location.href = site_url;
+      }
+    }
+  });
 }
