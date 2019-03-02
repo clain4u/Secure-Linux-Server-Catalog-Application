@@ -249,27 +249,8 @@ def categoryView(category_name, category_id):
                            user=login_session)
 
 
-# JSON endpoint to retrive all products in a category
-@app.route('/catalog/<string:category_name>/<int:category_id>/view/JSON')
-def categoryViewEndpoint(category_name, category_id):
-    category = session.query(Category).filter_by(id=category_id).first()
-    products = session.query(Products).filter_by(category_id=category_id).all()
-    if category is not None:
-        return jsonify(category_products=[i.serialize for i in products])
-    else:
-        error = {"error": "category not found"}
-        return jsonify(error)
-
-
-# JSON endpoint to retrive all categrories
-@app.route('/categories/JSON', methods=['GET'])
-def catgoriesJSON():
-    category = session.query(Category).all()
-    return jsonify(categories=[i.serialize for i in category])
-
-
 # Add new categroy
-@app.route('/category/new/', methods=['GET', 'POST'])
+@app.route('/catalog/category/new/', methods=['GET', 'POST'])
 def newCategory():
     if request.method == 'POST':  # POST creates the category
         categoryName = request.form.get('txtCategory')
@@ -332,21 +313,8 @@ def productView(category_name, product_name, product_id):
         return redirect('404')
 
 
-# JSON endpoint to retrive product details
-@app.route('/catalog/<string:category_name>/<string:product_name>/'
-           + '<int:product_id>/view/JSON')
-def productViewJSON(category_name, product_name, product_id):
-    categories = session.query(Category).all()
-    product = session.query(Products).filter_by(id=product_id).first()
-    if product is not None:  # at least one matching product
-        return jsonify(categories=product.serialize)
-    else:
-        error = {"error": "no products found"}
-        return jsonify(error)
-
-
 # Add new product
-@app.route('/products/new/', methods=['GET', 'POST'])
+@app.route('/catalog/products/new/', methods=['GET', 'POST'])
 def newProduct():
     if request.method == 'POST':  # POST creates a new product
         productName = request.form.get('txtName')
@@ -433,6 +401,40 @@ def productDelete(category_name, product_name, product_id):
                                user=login_session)
 
 # =================== End of Product Handler Functions =================
+
+
+# ==================== JSON EndPoint Handler Functions =================
+# JSON endpoint to retrive all categrories
+@app.route('/catalog/categories/JSON')
+def catgoriesJSON():
+    category = session.query(Category).all()
+    return jsonify(categories=[i.serialize for i in category])
+
+
+# JSON endpoint to retrive all products in a category
+@app.route('/catalog/category/<int:category_id>/JSON')
+def categoryViewEndpoint(category_id):
+    category = session.query(Category).filter_by(id=category_id).first()
+    products = session.query(Products).filter_by(category_id=category_id).all()
+    if category is not None:
+        return jsonify(category_products=[i.serialize for i in products])
+    else:
+        error = {"error": "category not found"}
+        return jsonify(error)
+
+
+# JSON endpoint to retrive product details
+@app.route('/catalog/product/<int:product_id>/JSON')
+def productViewJSON(product_id):
+    categories = session.query(Category).all()
+    product = session.query(Products).filter_by(id=product_id).first()
+    if product is not None:  # at least one matching product
+        return jsonify(categories=product.serialize)
+    else:
+        error = {"error": "no products found"}
+        return jsonify(error)
+
+# =================== End of JSON EndPoint Handler Functions =================
 
 
 if __name__ == '__main__':
