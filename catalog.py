@@ -304,7 +304,8 @@ def categoryEdit(category_name, category_id):
             return redirect(returnURL.format(myCategoryQuery.name,
                             myCategoryQuery.id))
     else:
-        categories = session.query(Category).all()
+        categories = session.query(Category).filter_by(
+                     user_id=login_session['id']).all()
         category = session.query(Category).filter_by(id=category_id).first()
         return render_template('edit-category.html', category=category,
                                categories=categories, user=login_session)
@@ -329,7 +330,8 @@ def newProduct():
         return redirect(returnURL.format(product.category.name,
                         product.name, product.id))
     else:
-        categories = session.query(Category).all()
+        categories = session.query(Category).filter_by(
+                     user_id=login_session['id']).all()
         return render_template('_add-product.html', categories=categories)
 
 

@@ -1,3 +1,16 @@
+{% if categories|length == 0 %}
+<br>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+   <strong>Oops..!! You have not created any categories yet</strong><br> Please create a category to add a new product.
+   <hr>
+   <div class="btn-group mr-2">
+     <button class="btn btn-secondary btn-sm" onclick="modalPop('newCategory')">+ Add New Category</button>
+   </div>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% else %}
 <form action="/products/new/" method="post">
 <div class="modal-header">
   <h5 class="modal-title" id="exampleModalLongTitle">Add New Product</h5>
@@ -33,3 +46,4 @@
   <button type="submit" class="btn btn-primary">Create New Product</button>
 </div>
 </form>
+{% endif %}
