@@ -29,6 +29,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# =========== OAuth and logged in user Helper Functions ==========
+
 
 # Create anti-forgery state token
 @app.route('/login')
@@ -36,7 +38,6 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
 
@@ -129,9 +130,8 @@ def gconnect():
     print "done!"
     return output
 
-# User Helper Functions
 
-
+#   ===== User Helper Functions ====
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -152,6 +152,7 @@ def getUserID(email):
         return user.id
     except:
         return None
+#  ===== End of User Helper Functions ====
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -164,9 +165,7 @@ def gdisconnect():
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    # url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
-    # h = httplib2.Http()
-    # result = h.request(url, 'POST')[0]
+
     http = httplib2.Http()
     body = {'token': access_token}
     result = http.request(
@@ -192,8 +191,10 @@ def gdisconnect():
             json.dumps(result, 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+# =========== End of OAuth and logged in user Helper Functions ==========
 
 
+# =========== Routing Handler Functions ==========
 # prevent page caching in browser for all pages
 @app.after_request
 def add_header(r):
@@ -201,10 +202,12 @@ def add_header(r):
     r.headers["Pragma"] = "no-cache"
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0, no-store, must-revalidate'
+    # Headers to force browser read only from server even on an event where
+    # user press the back and forward buttons.
     return r
 
 
-# handles all 404 errors and send user to friendly 404 page.
+# Catches all 404 errors and send user to friendly 404 page.
 @app.errorhandler(404)
 def not_found(e):
     categories = session.query(Category).all()
@@ -216,10 +219,13 @@ def not_found(e):
 @app.route('/')
 def routeToHome():
     return redirect('/catalog/')
+# =========== End of Routing Handler Functions =========
 
 
+# ================ Application Home Page ===============
 @app.route('/catalog/')
 def categories():
+    # fetches all categroy to use in categrory list menu
     categories = session.query(Category).all()
     # joining using ForeignKey relationship to get parent category
     # reverse ordering by id to get the last 10 product entries
@@ -227,14 +233,12 @@ def categories():
             "Products.id desc").limit(10)
     return render_template('home.html', categories=categories,
                            products=products, user=login_session)
+# ============== End of Application Home Page ===========
 
 
-@app.route('/categories/JSON', methods=['GET'])
-def catgoriesJSON():
-    category = session.query(Category).all()
-    return jsonify(categories=[i.serialize for i in category])
+# =============== Category Handler Functions ============
 
-
+# Retrive all products in a category
 @app.route('/catalog/<string:category_name>/<int:category_id>/view/')
 def categoryView(category_name, category_id):
     category = session.query(Category).filter_by(id=category_id).first()
@@ -245,53 +249,52 @@ def categoryView(category_name, category_id):
                            user=login_session)
 
 
-@app.route('/catalog/<string:category_name>/<string:product_name>/'
-           + '<int:product_id>/view/')
-def productView(category_name, product_name, product_id):
-    categories = session.query(Category).all()
-    product = session.query(Products).filter_by(id=product_id).first()
-    if product is not None:  # at least one matching product
-        return render_template('product.html', category=category_name,
-                               product=product, categories=categories,
-                               user=login_session)
+# JSON endpoint to retrive all products in a category
+@app.route('/catalog/<string:category_name>/<int:category_id>/view/JSON')
+def categoryViewEndpoint(category_name, category_id):
+    category = session.query(Category).filter_by(id=category_id).first()
+    products = session.query(Products).filter_by(category_id=category_id).all()
+    if category is not None:
+        return jsonify(category_products=[i.serialize for i in products])
     else:
-        return redirect('404')
+        error = {"error": "category not found"}
+        return jsonify(error)
 
 
-@app.route('/catalog/<string:category_name>/<string:product_name>/'
-           + '<int:product_id>/edit/', methods=['GET', 'POST'])
-def productEdit(category_name, product_name, product_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    if request.method == 'POST':
-        myProductQuery = session.query(Products).filter_by(
-                         id=request.form.get('hidProductID')).first()
-        if myProductQuery != []:
-            myProductQuery.name = request.form.get('txtName')
-            myProductQuery.category_id = request.form.get('selCategory')
-            myProductQuery.price = request.form.get('txtPrice')
-            myProductQuery.description = request.form.get('txtDescription')
-            session.add(myProductQuery)
-            session.commit()
-            flash('Product updated successfully')
-            categories = session.query(Category).all()
-            product = session.query(Products).filter_by(
-                      id=product_id).join(Category).first()
-            returnURL = '''/catalog/{0}/{1}/{2}/edit'''
-            return redirect(returnURL.format(product.category.name,
-                            product.name, product.id))
-    else:
+# JSON endpoint to retrive all categrories
+@app.route('/categories/JSON', methods=['GET'])
+def catgoriesJSON():
+    category = session.query(Category).all()
+    return jsonify(categories=[i.serialize for i in category])
+
+
+# Add new categroy
+@app.route('/category/new/', methods=['GET', 'POST'])
+def newCategory():
+    if request.method == 'POST':  # POST creates the category
+        categoryName = request.form.get('txtCategory')
+        newCategory = Category(name=categoryName, user_id=login_session['id'])
+        session.add(newCategory)
+        session.commit()
+        flash('Category "'+newCategory.name+'" added to catalog.')
         categories = session.query(Category).all()
-        product = session.query(Products).filter_by(id=product_id).first()
-        return render_template('edit.html', category=category_name,
-                               product=product, categories=categories,
-                               user=login_session)
+        thisCategory = session.query(Category).filter_by(
+                  id=newCategory.id).first()
+        returnURL = '''/catalog/{0}/{1}/view'''
+        return redirect(returnURL.format(thisCategory.name,
+                        thisCategory.id))
+        # Formats URL and redirects to newly created categroy page
+    else:
+        # GET displays the UI page to create the categoryEnd of Category
+        categories = session.query(Category).all()
+        return render_template('_add-category.html', categories=categories)
 
 
+# Edit category
 @app.route('/catalog/<string:category_name>/'
            + '<int:category_id>/edit/', methods=['GET', 'POST'])
 def categoryEdit(category_name, category_id):
-    if request.method == 'POST':
+    if request.method == 'POST':  # POST updates the category
         myCategoryQuery = session.query(Category).filter_by(
                          id=request.form.get('hidCategoryID')).first()
         if myCategoryQuery != []:
@@ -303,16 +306,49 @@ def categoryEdit(category_name, category_id):
             returnURL = '''/catalog/{0}/{1}/edit'''
             return redirect(returnURL.format(myCategoryQuery.name,
                             myCategoryQuery.id))
-    else:
+            # Formats URL and redirects to the updated categroy page
+    else:   # GET displays the edit page
         categories = session.query(Category).filter_by(
                      user_id=login_session['id']).all()
         category = session.query(Category).filter_by(id=category_id).first()
         return render_template('edit-category.html', category=category,
                                categories=categories, user=login_session)
 
+# =============== End of Category Handler Functions =============
+
+
+# =================== Product Handler Functions =================
+# Retrive product details
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/view/')
+def productView(category_name, product_name, product_id):
+    categories = session.query(Category).all()
+    product = session.query(Products).filter_by(id=product_id).first()
+    if product is not None:  # at least one matching product
+        return render_template('product.html', category=category_name,
+                               product=product, categories=categories,
+                               user=login_session)
+    else:  # worst case - if no matching product redirect to 404 page
+        return redirect('404')
+
+
+# JSON endpoint to retrive product details
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/view/JSON')
+def productViewJSON(category_name, product_name, product_id):
+    categories = session.query(Category).all()
+    product = session.query(Products).filter_by(id=product_id).first()
+    if product is not None:  # at least one matching product
+        return jsonify(categories=product.serialize)
+    else:
+        error = {"error": "no products found"}
+        return jsonify(error)
+
+
+# Add new product
 @app.route('/products/new/', methods=['GET', 'POST'])
 def newProduct():
-    if request.method == 'POST':
+    if request.method == 'POST':  # POST creates a new product
         productName = request.form.get('txtName')
         category = request.form.get('selCategory')
         price = request.form.get('txtPrice')
@@ -329,29 +365,46 @@ def newProduct():
         returnURL = '''/catalog/{0}/{1}/{2}/view'''
         return redirect(returnURL.format(product.category.name,
                         product.name, product.id))
+        # Formats URL and redirects to newly created product page
     else:
+        # GET displays the UI page to create new product
         categories = session.query(Category).filter_by(
                      user_id=login_session['id']).all()
         return render_template('_add-product.html', categories=categories)
 
 
-@app.route('/category/new/', methods=['GET', 'POST'])
-def newCategory():
-    if request.method == 'POST':
-        categoryName = request.form.get('txtCategory')
-        newCategory = Category(name=categoryName, user_id=login_session['id'])
-        session.add(newCategory)
-        session.commit()
-        flash('Category "'+newCategory.name+'" added to catalog.')
-        categories = session.query(Category).all()
-        thisCategory = session.query(Category).filter_by(
-                  id=newCategory.id).first()
-        returnURL = '''/catalog/{0}/{1}/view'''
-        return redirect(returnURL.format(thisCategory.name,
-                        thisCategory.id))
+# Edit product
+@app.route('/catalog/<string:category_name>/<string:product_name>/'
+           + '<int:product_id>/edit/', methods=['GET', 'POST'])
+def productEdit(category_name, product_name, product_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method == 'POST':  # POST updates the product
+        myProductQuery = session.query(Products).filter_by(
+                         id=request.form.get('hidProductID')).first()
+        if myProductQuery != []:
+            myProductQuery.name = request.form.get('txtName')
+            myProductQuery.category_id = request.form.get('selCategory')
+            myProductQuery.price = request.form.get('txtPrice')
+            myProductQuery.description = request.form.get('txtDescription')
+            session.add(myProductQuery)
+            session.commit()
+            flash('Product updated successfully')
+            categories = session.query(Category).all()
+            product = session.query(Products).filter_by(
+                      id=product_id).join(Category).first()
+            returnURL = '''/catalog/{0}/{1}/{2}/edit'''
+            return redirect(returnURL.format(product.category.name,
+                            product.name, product.id))
+            # Formats URL and redirects to edit page with changes updated
+            # user can continue editing if needed
     else:
+        # GET displays the UI page to update the product
         categories = session.query(Category).all()
-        return render_template('_add-category.html', categories=categories)
+        product = session.query(Products).filter_by(id=product_id).first()
+        return render_template('edit.html', category=category_name,
+                               product=product, categories=categories,
+                               user=login_session)
 
 
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
@@ -360,7 +413,7 @@ def productDelete(category_name, product_name, product_id):
     if 'username' not in login_session:
         return redirect('/login')
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # POST deletes the category
         myProductQuery = session.query(Products).filter_by(
                          id=request.form.get('hidProductID')).first()
         if myProductQuery != []:
@@ -372,12 +425,14 @@ def productDelete(category_name, product_name, product_id):
             return render_template('delete.html', category=category_name,
                                    product=request.form.get('txtName'),
                                    categories=categories, user=login_session)
-    else:
+    else:  # GET displays the UI page to confirm delete
         categories = session.query(Category).all()
         product = session.query(Products).filter_by(id=product_id).first()
         return render_template('delete.html', category=category_name,
                                product=product, categories=categories,
                                user=login_session)
+
+# =================== End of Product Handler Functions =================
 
 
 if __name__ == '__main__':
