@@ -49,7 +49,8 @@ class Products(Base):
            'name': self.name,
            'id': self.id,
            'description': self.description,
-           'price': self.price
+           'price': self.price,
+           'category_id': self.category_id
         }
 
 
