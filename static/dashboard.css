@@ -35,6 +35,9 @@ img{
 .profileImage img{
   border-radius: 25px;
 }
+.navbar{
+  height:95px;
+}
 .navbar-nav li{
   float: right;
 }
@@ -50,7 +53,6 @@ h1 small{
   padding-bottom: 1000px;
   margin-bottom: -1000px;
 }
-
 .logout:hover{
   cursor:pointer;
   color:#0069d9;
