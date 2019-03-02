@@ -8,9 +8,9 @@ function modalPop(which){
   var url=''; // url to fetch
 
   if(which == 'newProduct'){
-    url='/products/new/'
+    url='/catalog/products/new/'
   }else if(which == 'newCategory'){
-    url='/category/new/'
+    url='/catalog/category/new/'
   }
 
   $.get( site_url+url, function( data ) {
