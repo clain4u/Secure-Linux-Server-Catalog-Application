@@ -370,7 +370,7 @@ def productEdit(category_name, product_name, product_id):
         # GET displays the UI page to update the product
         categories = session.query(Category).all()
         product = session.query(Products).filter_by(id=product_id).first()
-        return render_template('edit.html', category=category_name,
+        return render_template('edit-product.html', category=category_name,
                                product=product, categories=categories,
                                user=login_session)
 
@@ -390,13 +390,13 @@ def productDelete(category_name, product_name, product_id):
             session.commit()
             flash('Product "'+productToDelete+'" deleted from catalog.')
             categories = session.query(Category).all()
-            return render_template('delete.html', category=category_name,
+            return render_template('delete-product.html', category=category_name,
                                    product=request.form.get('txtName'),
                                    categories=categories, user=login_session)
     else:  # GET displays the UI page to confirm delete
         categories = session.query(Category).all()
         product = session.query(Products).filter_by(id=product_id).first()
-        return render_template('delete.html', category=category_name,
+        return render_template('delete-product.html', category=category_name,
                                product=product, categories=categories,
                                user=login_session)
 
