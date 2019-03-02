@@ -121,10 +121,10 @@ def gconnect():
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
-    output += '<img src="'
+    output += '<center><img src="'
     output += login_session['picture']
     output += ' " style = "width: 100px; height: 100px;border-radius: 50px;'
-    output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += 'margin:0px auto"> </center>'
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -183,7 +183,9 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
         flash('You have successfully logged out')
-        redirect('/catalog/')
+        response = make_response(json.dumps({'status': 'Disconnected'}), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
     else:
         # For whatever reason, the given token was invalid.
         response = make_response(
@@ -195,10 +197,6 @@ def gdisconnect():
 # prevent page caching in browser for all pages
 @app.after_request
 def add_header(r):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
     r.headers["Expires"] = "0"
