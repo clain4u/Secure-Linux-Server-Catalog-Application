@@ -96,7 +96,58 @@ The category page displays the products within the category. Each product displa
 #### Product Page
 The product page displays the produt name, price, catgroy and a detailed product description.
 
+### User Interface for Registered User [UI]
+The registerd / logged in user get access to all of the public user pages with the below additional features.
+* Create new categories and Products
+* Edit categories and Products 
+* Delete categories and Products
 
+##### Login and Logout
+The catlog app allows the users to login via Google accounts 
+* To login , click on the login button towards the top right corner of the application
+* This will bring up the login page , once you have succesfully validated with google account, you wull be redirected to the home page that displays your logged in username and profile image towards the top right corner
+* To logout mouse over the profile name or image and click on the logout link on the popover menu
+* This will logout the user from the application and redirects to the home page
+
+#### Create category
+To create a category click on the "Add new category" button which available towards the top right content area on all pages.
+* This will bring up the "Add new category" modal window 
+* Enter the category name and submit the form
+* This will create a new category 
+
+#### Create Product
+To create a product click on the "Add new product" button which available towards the top right content area on all pages.
+* This will bring up a modal window 
+* Enter the product details [name, price, description] , select the desired category and submit the form
+* This will create the new product in desired category
+Note: You need atleast one category created before you can start adding products 
+
+#### Edit Category
+To edit a category, 
+* Navigate to desired category page 
+* Click on the edit button [next to the category name ] , this will take the user to category edit page
+* Edit categroy name and submit the page
+* This will instantly update the category
+
+#### Edit product
+To edit a product, 
+* Navigate to desired product page 
+* Click on the edit product button towards the bottom left, this will take the user to product edit page
+* Edit Product details and submit the page
+* The users can also change the category of the product to another category he has created
+* This will instantly update the category
+
+### Delete Category
+To delete a category
+* Navigate to desired category page and click on delete [ next to category name]
+* This will take the user to the confirm delete page
+* Once confirmed the category and its products are deleted
+
+### Delete product
+To delete a product
+* Navigate to desired product page and click on delete product [ bottom left]
+* This will take the user to the confirm delete page
+* Once confirmed the product is deleted from the category
 
 
 
