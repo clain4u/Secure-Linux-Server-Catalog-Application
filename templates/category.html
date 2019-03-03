@@ -66,6 +66,8 @@
               {% if user.id == category.user_id  %} <!-- if this user is the owner of this product -->
               <a href="/catalog/{{category.name}}/{{category.id}}/edit/">
               <small><i class="fa fa-edit" aria-hidden="true"></i>[edit]</small></a>
+              <a style="color:red" href="/catalog/{{category.name}}/{{category.id}}/delete/">
+              <small><i class="fa fa-trash" aria-hidden="true"></i> [Delete]</small></a>
               {% endif %}
             {% endif %}
             </h1>

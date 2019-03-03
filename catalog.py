@@ -295,6 +295,37 @@ def categoryEdit(category_name, category_id):
         return render_template('edit-category.html', category=category,
                                categories=categories, user=login_session)
 
+
+# Delete Category
+@app.route('/catalog/<string:category_name>/'
+           + '<int:category_id>/delete/', methods=['GET', 'POST'])
+def categoryDelete(category_name, category_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+
+    if request.method == 'POST':  # POST deletes the category
+        categoryToDelete = session.query(Category).filter_by(
+                          id=request.form.get('hidCategoryID')).first()
+        if categoryToDelete != []:
+            deletedCategory = categoryToDelete.name
+            session.delete(categoryToDelete)
+
+            # delete all products in the category
+            productsToDelete = session.query(Products).filter_by(
+                 category_id=request.form.get('hidCategoryID')).delete()
+            session.commit()
+            flash('Category "'+deletedCategory+'" deleted from catalog.')
+            categories = session.query(Category).all()
+            return render_template('delete-category.html',
+                                   category=category_name,
+                                   categories=categories, user=login_session)
+    else:
+        # GET displays the UI page to confirm delete
+        categories = session.query(Category).all()
+        category = session.query(Category).filter_by(id=category_id).first()
+        return render_template('delete-category.html', category=category,
+                               categories=categories, user=login_session)
+
 # =============== End of Category Handler Functions =============
 
 
