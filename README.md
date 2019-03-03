@@ -77,7 +77,25 @@ Catalog app running at port:5000 Url- http://localhost:5000/catalog
  * Debugger PIN: 737-066-608
  ```
 The program is now ready to use , open up the browser and point the url to
-http://localhost:5000/catalog to access the catlog application.
+http://localhost:5000/catalog to access the catalog application.
+
+### User Interface for Public User [UI] 
+The catlog application provides an easy to use web based user interface that lits the categories and products for a public user, This section covers the UI details for the public user interface.
+
+#### Basic navigation
+* The catlog application lists the available categories on the left menu panel [common for all pages]
+* select [click / navigate] the desired category to bring up the categroy page that lists the products in that category.
+* Once in category page select any of the product listed to bring up the product page
+
+##### Home page
+Home page displays the **latest products** in the content area. Each product displays produt name, price and catgroy details. The users can click on the desired product to reach the product page, or the users can choose a desired category from the left navigation menu. 
+
+##### Category page
+The category page displays the products within the category. Each product displays produt name, price and catgroy details. The users can click on the desired product to reach the product page.
+
+#### Product Page
+The product page displays the produt name, price, catgroy and a detailed product description.
+
 
 
 
