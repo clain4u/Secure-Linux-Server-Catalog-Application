@@ -149,5 +149,119 @@ To delete a product
 * This will take the user to the confirm delete page
 * Once confirmed the product is deleted from the category
 
+## JSON EndPoints
+The catalog app provides readonly endpoints for public, the endpoints are as follows
+#### Categories EndPoint
+```http://localhost:5000/catalog/categories/JSON```
+This endpoint returns the list of available categories with the following fields
+* ID
+* Name
+Below is the sample output for this request
+```
+{
+  "categories": [
+    {
+      "id": 1, 
+      "name": "Baby Store"
+    }, 
+    {
+      "id": 2, 
+      "name": "Mens Arena"
+    }, 
+    {
+      "id": 3, 
+      "name": "Teenage Fasions"
+    }, 
+    {
+      "id": 4, 
+      "name": "Ladies Outlet"
+    }, 
+    {
+      "id": 5, 
+      "name": "The Women Store"
+    }, 
+    {
+      "id": 6, 
+      "name": "The Vetrans Cave"
+    }
+  ]
+}
+```
+#### Categoy Products EndPoint
+**format**
+```http://localhost:5000/catalog/category/<Category_ID>/JSON```
+Note: Category_ID's can be fetched from the categories endpoint [see above]
+
+Example
+```http://localhost:5000/catalog/category/2/JSON```
+
+This endpoint returns the list of all products with the following fields within the requested categorry.
+* Name
+* ID
+* Price
+* Description
+* Category_ID
+Below is the sample output for this request
+```
+{
+  "category_products": [
+    {
+      "category_id": 2, 
+      "description": "A high Quality Denim Jeens", 
+      "id": 3, 
+      "name": "New Port Jeens", 
+      "price": "$123.00"
+    }, 
+    {
+      "category_id": 2, 
+      "description": "Keep your eyes safe and style unmatched. Now with UV protection ", 
+      "id": 8, 
+      "name": "Ray Ban Sun Glass", 
+      "price": "$399.99"
+    }
+  ]
+}
+```
+#### Single Product EndPoint
+**format**
+```http://localhost:5000/catalog/product/<Product_ID>/JSON```
+Note: Product_ID can be fetched from the "Categoy Products" endpoint [see above]
+
+Example
+```http://localhost:5000/catalog/product/8/JSON```
+
+This endpoint returns the a single product with the following fields.
+* Name
+* ID
+* Price
+* Description
+* Category_ID
+Below is the sample output for this request
+```
+{
+  "product": {
+    "category_id": 2, 
+    "description": "Keep your eyes safe and style unmatched. Now with UV protection ", 
+    "id": 8, 
+    "name": "Ray Ban Sun Glass", 
+    "price": "$399.99"
+  }
+}
+```
+
+## Scope of Expansion
+The project is designed with a view to expand further, hence I have includer dummy images, JavaScript & HTML Frameworks
+
+##### Dummy images
+I have used dummy product images that fetches the placeholder images from http://placehold.jp for the time being
+Someday later I wish to expand this catlog project to have a product image module added.
+
+##### AJAX-it
+The Jquery and Bootsrap bundle is inclided with a vision to take the project to a complete asynchronus level of application where the users get a seemless experiance.
+
+#### Responsive
+The bootsrap framework and the theme is designed with a vison to make the project 100 responsive 
+
+While these are the plans for the future, **I encourage the users to fork the project and take it to the next level**
 
 
