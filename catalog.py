@@ -461,7 +461,7 @@ def productViewJSON(product_id):
     categories = session.query(Category).all()
     product = session.query(Products).filter_by(id=product_id).first()
     if product is not None:  # at least one matching product
-        return jsonify(categories=product.serialize)
+        return jsonify(product=product.serialize)
     else:
         error = {"error": "no products found"}
         return jsonify(error)
