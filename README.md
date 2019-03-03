@@ -4,6 +4,10 @@ A python flask application to implement an item catalog web application where us
 ### Prerequisites
 
 Virtual Box, Vagrant, Python, SQLLite
+##### Internet connection [not a necessity ]
+The project uses third party icon libraries  and placeholder images to improve the user experience
+These requires an internet connection to connect to CDN and fetch the resources.
+**However these are not a necessity for the projects smooth function , the project works great offline**
 
 ## Getting Started
 To start with you need the virtual box installed.
@@ -270,6 +274,7 @@ While these are the plans for the future, **I encourage the users to fork the pr
 * [SQLite](https://www.sqlite.org)
 * [jQuery](https://jquery.com/)
 * [Bootstrap](https://getbootstrap.com/)
+* [Font Awesome ](https://fontawesome.com/)
 
 ## Author
 
