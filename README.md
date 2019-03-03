@@ -263,5 +263,27 @@ The Jquery and Bootsrap bundle is inclided with a vision to take the project to 
 The bootsrap framework and the theme is designed with a vison to make the project 100 responsive 
 
 While these are the plans for the future, **I encourage the users to fork the project and take it to the next level**
+- - - 
+## Built With
+* [Python](https://www.python.org/)
+* [FLASK](http://flask.pocoo.org/)
+* [SQLite](https://www.sqlite.org)
+* [jQuery](https://jquery.com/)
+* [Bootstrap](https://getbootstrap.com/)
+
+## Author
+
+Clain Dsilva - Catlog Udacity Project
+
+## License
+
+This project is licensed only to be used by udacity FSND mentors.
+
+## Acknowledgments
+
+* The Atom editor , without which the coding is a mess.
+* The whole udacity batchmates and metors
+* The Linux Mint - the OS I work on.
+* My wife & kids - the great inspiration.
 
 
