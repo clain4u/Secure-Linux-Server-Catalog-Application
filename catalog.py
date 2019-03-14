@@ -277,7 +277,8 @@ def newCategory():
 def categoryEdit(category_name, category_id):
     if request.method == 'POST':  # POST updates the category
         myCategoryQuery = session.query(Category).filter_by(
-                         id=request.form.get('hidCategoryID')).first()
+                         id=request.form.get('hidCategoryID'),
+                         user_id=login_session['id']).first()
         if myCategoryQuery != []:
             myCategoryQuery.name = request.form.get('txtName')
             session.add(myCategoryQuery)
@@ -289,11 +290,19 @@ def categoryEdit(category_name, category_id):
                             myCategoryQuery.id))
             # Formats URL and redirects to the updated categroy page
     else:   # GET displays the edit page
-        categories = session.query(Category).filter_by(
-                     user_id=login_session['id']).all()
-        category = session.query(Category).filter_by(id=category_id).first()
-        return render_template('edit-category.html', category=category,
-                               categories=categories, user=login_session)
+        categories = session.query(Category).all()
+        category = session.query(Category).filter_by(
+                                                    id=category_id,
+                                                    user_id=login_session['id']
+                                                    ).first()
+
+        # unauthorised access of any kind [url manipulation, xss attacks]
+        # will be redirected to 404 handler
+        if category is not None:
+            return render_template('edit-category.html', category=category,
+                                   categories=categories, user=login_session)
+        else:
+            return redirect('404')
 
 
 # Delete Category
@@ -305,8 +314,10 @@ def categoryDelete(category_name, category_id):
 
     if request.method == 'POST':  # POST deletes the category
         categoryToDelete = session.query(Category).filter_by(
-                          id=request.form.get('hidCategoryID')).first()
-        if categoryToDelete != []:
+                          id=request.form.get('hidCategoryID'),
+                          user_id=login_session['id']
+                          ).first()
+        if categoryToDelete is not None:
             deletedCategory = categoryToDelete.name
             session.delete(categoryToDelete)
 
@@ -319,12 +330,22 @@ def categoryDelete(category_name, category_id):
             return render_template('delete-category.html',
                                    category=category_name,
                                    categories=categories, user=login_session)
+        else:
+            return redirect('404')
     else:
         # GET displays the UI page to confirm delete
         categories = session.query(Category).all()
-        category = session.query(Category).filter_by(id=category_id).first()
-        return render_template('delete-category.html', category=category,
-                               categories=categories, user=login_session)
+        category = session.query(Category).filter_by(
+                                                    id=category_id,
+                                                    user_id=login_session['id']
+                                                    ).first()
+        # unauthorised access of any kind [url manipulation, xss attacks]
+        # will be redirected to 404 handler
+        if category is not None:
+            return render_template('delete-category.html', category=category,
+                                   categories=categories, user=login_session)
+        else:
+            return redirect('404')
 
 # =============== End of Category Handler Functions =============
 
@@ -352,19 +373,28 @@ def newProduct():
         category = request.form.get('selCategory')
         price = request.form.get('txtPrice')
         description = request.form.get('txtDescription')
-        newProduct = Products(name=productName, price=price,
-                              description=description, category_id=category,
-                              user_id=login_session['id'])
-        session.add(newProduct)
-        session.commit()
-        flash('Product "'+newProduct.name+'" added to catalog.')
-        categories = session.query(Category).all()
-        product = session.query(Products).filter_by(
-                  id=newProduct.id).join(Category).first()
-        returnURL = '''/catalog/{0}/{1}/{2}/view'''
-        return redirect(returnURL.format(product.category.name,
-                        product.name, product.id))
-        # Formats URL and redirects to newly created product page
+        checkUserCategory = session.query(Category).filter_by(
+                            id=category, user_id=login_session['id']
+                            ).first()
+        if checkUserCategory is not None:
+            newProduct = Products(name=productName, price=price,
+                                  description=description,
+                                  category_id=category,
+                                  user_id=login_session['id'])
+            session.add(newProduct)
+            session.commit()
+            flash('Product "'+newProduct.name+'" added to catalog.')
+            categories = session.query(Category).all()
+            product = session.query(Products).filter_by(
+                      id=newProduct.id).join(Category).first()
+            returnURL = '''/catalog/{0}/{1}/{2}/view'''
+            return redirect(returnURL.format(product.category.name,
+                            product.name, product.id))
+            # Formats URL and redirects to newly created product page
+        else:
+            # unauthorised access of any kind [url manipulation, xss attacks]
+            # will be redirected to 404 handler """
+            return redirect('404')
     else:
         # GET displays the UI page to create new product
         categories = session.query(Category).filter_by(
@@ -380,8 +410,15 @@ def productEdit(category_name, product_name, product_id):
         return redirect('/login')
     if request.method == 'POST':  # POST updates the product
         myProductQuery = session.query(Products).filter_by(
-                         id=request.form.get('hidProductID')).first()
-        if myProductQuery != []:
+                         id=request.form.get('hidProductID'),
+                         user_id=login_session['id']
+                         ).first()
+        checkUserCategory = session.query(Category).filter_by(
+                            id=request.form.get('selCategory'),
+                            user_id=login_session['id']
+                            ).first()
+        # checks if the product and categroy belongs to the user
+        if myProductQuery is not None and checkUserCategory is not None:
             myProductQuery.name = request.form.get('txtName')
             myProductQuery.category_id = request.form.get('selCategory')
             myProductQuery.price = request.form.get('txtPrice')
@@ -397,13 +434,22 @@ def productEdit(category_name, product_name, product_id):
                             product.name, product.id))
             # Formats URL and redirects to edit page with changes updated
             # user can continue editing if needed
+        else:
+            return redirect('404')
     else:
         # GET displays the UI page to update the product
         categories = session.query(Category).all()
-        product = session.query(Products).filter_by(id=product_id).first()
-        return render_template('edit-product.html', category=category_name,
-                               product=product, categories=categories,
-                               user=login_session)
+        product = session.query(Products).filter_by(id=product_id,
+                                                    user_id=login_session['id']
+                                                    ).first()
+        # unauthorised access of any kind [url manipulation, xss attacks]
+        # will be redirected to 404 handler """
+        if product is not None:
+            return render_template('edit-product.html', category=category_name,
+                                   product=product, categories=categories,
+                                   user=login_session)
+        else:
+            return redirect('404')
 
 
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
@@ -414,8 +460,9 @@ def productDelete(category_name, product_name, product_id):
 
     if request.method == 'POST':  # POST deletes the category
         myProductQuery = session.query(Products).filter_by(
-                         id=request.form.get('hidProductID')).first()
-        if myProductQuery != []:
+                         id=request.form.get('hidProductID'),
+                         user_id=login_session['id']).first()
+        if myProductQuery is not None:
             productToDelete = myProductQuery.name
             session.delete(myProductQuery)
             session.commit()
@@ -425,12 +472,22 @@ def productDelete(category_name, product_name, product_id):
                                    category=category_name,
                                    product=request.form.get('txtName'),
                                    categories=categories, user=login_session)
+        else:
+            return redirect('404')
+
     else:  # GET displays the UI page to confirm delete
         categories = session.query(Category).all()
-        product = session.query(Products).filter_by(id=product_id).first()
-        return render_template('delete-product.html', category=category_name,
-                               product=product, categories=categories,
-                               user=login_session)
+        product = session.query(Products).filter_by(id=product_id,
+                                                    user_id=login_session['id']
+                                                    ).first()
+        # unauthorised access of any kind [url manipulation, xss attacks]
+        # will be redirected to 404 handler """
+        if product is not None:
+            return render_template('delete-product.html',
+                                   category=category_name, product=product,
+                                   categories=categories, user=login_session)
+        else:
+            return redirect('404')
 
 # =================== End of Product Handler Functions =================
 
