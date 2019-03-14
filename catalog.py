@@ -1,13 +1,20 @@
-from flask import Flask, render_template, url_for, jsonify
-from flask import request, flash, redirect, make_response
+from flask import (Flask,
+                   render_template,
+                   url_for,
+                   jsonify,
+                   request,
+                   flash,
+                   redirect,
+                   make_response,
+                   session as login_session)
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, asc
 from database_setup import Base, Category, Products, User
-from flask import session as login_session
+from functools import wraps
 import random
 import string
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
+from oauth2client.client import (flow_from_clientsecrets,
+                                 FlowExchangeError)
 import httplib2
 import json
 import requests
@@ -150,8 +157,20 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception:
         return None
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        else:
+            flash("You are not allowed to access there")
+            return redirect('/login')
+    return decorated_function
+
 #  ===== End of User Helper Functions ====
 
 
@@ -251,6 +270,7 @@ def categoryView(category_name, category_id):
 
 # Add new categroy
 @app.route('/catalog/category/new/', methods=['GET', 'POST'])
+@login_required
 def newCategory():
     if request.method == 'POST':  # POST creates the category
         categoryName = request.form.get('txtCategory')
@@ -274,6 +294,7 @@ def newCategory():
 # Edit category
 @app.route('/catalog/<string:category_name>/'
            + '<int:category_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def categoryEdit(category_name, category_id):
     if request.method == 'POST':  # POST updates the category
         myCategoryQuery = session.query(Category).filter_by(
@@ -308,10 +329,8 @@ def categoryEdit(category_name, category_id):
 # Delete Category
 @app.route('/catalog/<string:category_name>/'
            + '<int:category_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def categoryDelete(category_name, category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-
     if request.method == 'POST':  # POST deletes the category
         categoryToDelete = session.query(Category).filter_by(
                           id=request.form.get('hidCategoryID'),
@@ -367,6 +386,7 @@ def productView(category_name, product_name, product_id):
 
 # Add new product
 @app.route('/catalog/products/new/', methods=['GET', 'POST'])
+@login_required
 def newProduct():
     if request.method == 'POST':  # POST creates a new product
         productName = request.form.get('txtName')
@@ -405,9 +425,8 @@ def newProduct():
 # Edit product
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
            + '<int:product_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def productEdit(category_name, product_name, product_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':  # POST updates the product
         myProductQuery = session.query(Products).filter_by(
                          id=request.form.get('hidProductID'),
@@ -454,10 +473,8 @@ def productEdit(category_name, product_name, product_id):
 
 @app.route('/catalog/<string:category_name>/<string:product_name>/'
            + '<int:product_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def productDelete(category_name, product_name, product_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-
     if request.method == 'POST':  # POST deletes the category
         myProductQuery = session.query(Products).filter_by(
                          id=request.form.get('hidProductID'),
