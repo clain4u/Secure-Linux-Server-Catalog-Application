@@ -35,7 +35,7 @@ You can now login to the new user with the command
 Its vital for any server to disable password based authentication for security.
 For this project we use key pair authentication method for added security.
 
-From your local linx machine run the following command to generate a keypair
+From your local Linux machine run the following command to generate a keypair
 ```$ ssh-keygen ```
 Enter the name when prompted for, make sure the path falls into your ```.ssh``` directory,
 this is mostly located inside your home directory, if it does not exist , please create one 
@@ -44,7 +44,7 @@ using ``` mkdir .ssh ```
 Our final path would look like this for example .
 ``` /home/clain/.ssh/userGrader ``` 
 for additional security you can add a password for the keyfile or leave empty for none.
-This will generate the keypair files inside our .ssh directory whiche are
+This will generate the keypair files inside our .ssh directory which are
 'userGrader' and 'userGrader.pub'
 
 From within the server terminal window, create a new directory .ssh
@@ -61,26 +61,26 @@ $ chmod 700 .ssh
 $ chmod 644 .ssh/authorized_keys
 ```
 ##### Disable SSH Password authentication
-For added security lets disable passwod based authentication within ssh, to do that lets edit the ssh config file
+For added security lets disable password based authentication within ssh, to do that lets edit the ssh config file
 ```$sudo nano /etc/ssh/sshd_config ```
 find the entry that reads ``` PasswordAuthentication ``` and set it to ``` PasswordAuthentication no ```
 
 ##### Change the default SSH port
 Change the default ssh port to say ``` 2200 ``` as a point of security measure.
 Within the same sshd_config file find the entry that reads ``` Port 22 ``` and change it to ``` Port 2200 ```
-save the file and exit. Seload the ssh service using ``` $ sudo service ssh restart ```
+save the file and exit. Reload the ssh service using ``` $ sudo service ssh restart ```
 
 ##### Login using key pair
 login to the server using the following command
 ```$ ssh grader@13.234.170.208 -p 2200 ```
 where "grader" is the user , "13.234.170.208" is the IP address of your server and "-p 2200" defines the ssh port.
-This will login you to the server terminal immediatly, if you have set a passoword for the key file you need to enter it for file access.
+This will login you to the server terminal immediately, if you have set a password for the key file you need to enter it for file access.
 
 ### Configure Firewall
-Now that we have succesfully setup the key pair authentication lets setup the firewall. Ubuntu comes with a preinstalled
-firewall "UFW" wihich is in a decativated state by default. You can check the status by typing ``` $ sudo ufw status ```
+Now that we have successfully setup the key pair authentication lets setup the firewall. Ubuntu comes with a pre-installed
+firewall "UFW" which is in a deactivated state by default. You can check the status by typing ``` $ sudo ufw status ```
 
-Now lets define the incoming and outgoing policys.  For security reasons lets deny all incoming sessions
+Now lets define the incoming and outgoing policy's.  For security reasons lets deny all incoming sessions
 ``` $ sudo ufw default deny  incoming ```
  Now you will get a message that reads
 ``` 
@@ -134,15 +134,15 @@ To                         Action      From
 123 (v6)                   ALLOW       Anywhere (v6)
  ```
  
- ## Configure Apache Webserver
+ ## Configure Apache Web Server
  Lets begin with the installation
  ```$ sudo apt-get install apache2 ```
- This will install apache webserver and accessing your IP address from your browser should output the default apache server page, for exmaple ``` http://13.234.170.208 ```
+ This will install Apache webserver and accessing your IP address from your browser should output the default Apache server page, for exmaple ``` http://13.234.170.208 ```
 
 For the python to work on wsgi mode we need to install the mod-wsgi handler
 ```$ sudo apt-get install libapache2-mod-wsgi ```
 
-Now we need to configure apache to handle our wsgi application through wsgi module, for this edit the apache configuration file 
+Now we need to configure Apache to handle our wsgi application through wsgi module, for this edit the Apache configuration file 
 ``` $ sudo nano /etc/apache2/sites-enabled/000-default.conf ```
 and add the entry ``` WSGIScriptAlias / /var/www/html/catalog.wsgi ``` within the <VirtualHost *:80> right before closing
 the </VirtualHost>, where "/var/www/html/catalog.wsgi" is the path to our wsgi application.
@@ -155,7 +155,7 @@ To install python from terminal execute ``` $ sudo apt install python ```
 This will install the basic python packages on to your server.
 
 #### Setup python virtual environment
-virtualenv is a tool to create isolated Python environments. virtualenv creates a folder which contains all the necessary executables to use the packages that a Python project would need. We will be using this custom configuired virtualenv for our catalog falsk application
+virtualenv is a tool to create isolated Python environments. virtualenv creates a folder which contains all the necessary executables to use the packages that a Python project would need. We will be using this custom configured virtualenv for our catalog falsk application
 
 Install python virtualenv with  ``` pip install virtualenv ```
 
@@ -189,7 +189,7 @@ Within the virtualenv we need to install all our ncessary python packages one by
 (catalog)$ pip install sqlalchemy
 ```
 ##### Udate apache config to use python virtualenv
-Update the apache config file to use the newly setup catlog virtulenv, to do that get the complete path of catalog virtualenv using the
+Update the apache config file to use the newly setup catalog virtulenv, to do that get the complete path of catalog virtualenv using the
 ``` (catalog)$ pip --version ``` command returns full path of where pip is installed 
 this will return this
 ``` pip 19.0.3 from /var/www/html/catalog/catalog/local/lib/python2.7/site-packages/pip (python 2.7) ```
@@ -246,7 +246,7 @@ Enter the desired username, in our case let it be ```grader```
 You will be prompetd with ``` Shall the new role be a superuser? (y/n) ```
 enter ``` y ``` .
 
-No you have succesfully created the user. For you to login as a user the postgreSQL requires a database in the same username, login to posgreSQL
+No you have successfully created the user. For you to login as a user the postgreSQL requires a database in the same username, login to posgreSQL
 ```$ sudo -i -u postgres ```
 Create new database for "grader" user
 ``` postgres@server:~$ createdb grader ```
@@ -276,39 +276,20 @@ Enter new password:
 Enter it again:
 ```
 Now you are done with the database setup
-**Be sure to upadate the password in the connection string of "database_setup.py" and "catalog.py"**
-The database connection string would look like this, where grader is user and catlog is the database name.
+**Be sure to update the password in the connection string of "database_setup.py" and "catalog.py"**
+The database connection string would look like this, where grader is user and catalog is the database name.
 ```
 create_engine('postgresql://grader:yourPassword@localhost/catalog')
 ```
 
-## Python Program 
+## Python Catalog Application 
+The catalog application is now ready to use , open up the browser and point the url to
+```
+http://13.234.170.208.xip.io 
+```
+to access the catalog application.
 
-Copy this program directory under vagrant folder so that its accessible the to the VM.
-Change the directory in terminal to program directory 
-```$ cd log_analysis ```
-Your terminal should display the below path
-``` vagrant/log_analysis $ ```
-
-### Executing the Program
-
-Execute using the following command in the terminal
-
-``` python catlog.py ```
-This will bring up the web server on port 5000 , your terminal should display the following
- ```
- Catalog app running at port:5000 Url- http://localhost:5000/catalog
- * Serving Flask app "catalog" (lazy loading)
- * Environment: production
- * Debug mode: on
- * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
- * Restarting with stat
-Catalog app running at port:5000 Url- http://localhost:5000/catalog
- * Debugger is active!
- * Debugger PIN: 737-066-608
- ```
-The program is now ready to use , open up the browser and point the url to
-http://localhost:5000/catalog to access the catalog application.
+The ```.xip.io`` segment in the url is a magic dns that resolves to the ip itself, this is essential for the google Oauth API to work 
 
 ### User Interface for Public User [UI] 
 The catalog application provides an easy to use web based user interface that list the categories and products for a public user, This section covers the UI details for the public user interface.
@@ -498,7 +479,7 @@ While these are the plans for the future, **I encourage the users to fork the pr
 ## Built With
 * [Python](https://www.python.org/)
 * [FLASK](http://flask.pocoo.org/)
-* [SQLite](https://www.sqlite.org)
+* [PostgreSQL](https://www.postgresql.org/)
 * [jQuery](https://jquery.com/)
 * [Bootstrap](https://getbootstrap.com/)
 * [Font Awesome ](https://fontawesome.com/)
@@ -511,9 +492,9 @@ Clain Dsilva - Catalog Udacity Project
 
 This project is licensed only to be used by Udacity FSND mentors.
 
-## Acknowledgments
+## Acknowledgements
 
 * The Atom editor , without which the coding is a mess.
-* The whole Udacity batchmates and metors
+* The whole Udacity batch mates and mentors
 * The Linux Mint - the OS I work on.
 * My wife & kids - the great inspiration.
