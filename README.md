@@ -1,4 +1,4 @@
-##### Quick Notes for Reviewer 
+##### Quick Notes for Project Reviewer 
 * Server IP Address 13.234.170.208
 * Application address http://13.234.170.208.xip.io
 
