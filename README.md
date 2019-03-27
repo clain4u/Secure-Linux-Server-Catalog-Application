@@ -74,8 +74,67 @@ save the file and exit. Seload the ssh service using ``` $ sudo service ssh rest
 login to the server using the following command
 ```$ ssh grader@13.234.170.208 -p 2200 ```
 where "grader" is the user , "13.234.170.208" is the IP address of your server and "-p 2200" defines the ssh port.
+This will login you to the server terminal immediatly, if you have set a passoword for the key file you need to enter it for file access.
 
+### Configure Firewall
+Now that we have succesfully setup the key pair authentication lets setup the firewall. Ubuntu comes with a preinstalled
+firewall "UFW" wihich is in a decativated state by default. You can check the status by typing ``` $ sudo ufw status ```
 
+Now lets define the incoming and outgoing policys.  For security reasons lets deny all incoming sessions
+``` $ sudo ufw default deny  incoming ```
+ Now you will get a message that reads
+``` 
+Default incoming policy changed to 'deny'
+(be sure to update your rules accordingly)
+```
+Lets allow all outgoing sessions
+```$ sudo ufw default allow outgoing ```
+This will output the following
+```
+Default outgoing policy changed to 'allow'
+(be sure to update your rules accordingly)
+```
+Now that we have configured the default rules lets allow the ports that are necessary for our server.
+We need to allow
+* SSH on port 2200
+* HTTP on port 80
+* NTP on port 123
+
+and deny the 
+* Default ssh port 22
+
+Lets execute the commands one by one 
+```
+$ sudo ufw allow ssh
+$ sudo ufw allow 2200/tcp
+$ sudo ufw allow www
+$ sudo ufw allow ntp
+$ sudo ufw deny 22
+$ sudo ufw deny 22/tcp
+```
+ Now that we have configured the firewall , lets enable it.
+ ``` sudo ufw enable ```
+ You can check the status and it should display the following
+ ```
+ Status: active
+
+To                         Action      From
+--                         ------      ----
+22                         DENY        Anywhere                  
+2200/tcp                   ALLOW       Anywhere                  
+80/tcp                     ALLOW       Anywhere                  
+123/tcp                    ALLOW       Anywhere                  
+22/tcp                     DENY        Anywhere                  
+123                        ALLOW       Anywhere                  
+22 (v6)                    DENY        Anywhere (v6)             
+2200/tcp (v6)              ALLOW       Anywhere (v6)             
+80/tcp (v6)                ALLOW       Anywhere (v6)             
+123/tcp (v6)               ALLOW       Anywhere (v6)             
+22/tcp (v6)                DENY        Anywhere (v6)             
+123 (v6)                   ALLOW       Anywhere (v6)
+ ```
+ 
+ 
 
 ### Vagrant
 
