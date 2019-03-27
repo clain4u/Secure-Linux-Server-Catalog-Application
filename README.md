@@ -1,3 +1,7 @@
+##### Quick Notes for Reviewer 
+* Server IP Address 13.234.170.208
+* Application address http://13.234.170.208.xip.io
+
 # Secure Linux Server Catalog Application
 A python flask application hosted on a secure Linux server to implement an item catalog web application where user can read / write/ edit / delete items and provide provide read only JSON endpoints. 
 
