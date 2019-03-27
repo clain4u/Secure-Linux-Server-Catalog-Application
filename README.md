@@ -147,7 +147,33 @@ Now we need to configure apache to handle our wsgi application through wsgi modu
 and add the entry ``` WSGIScriptAlias / /var/www/html/catalog.wsgi ``` within the <VirtualHost *:80> right before closing
 the </VirtualHost>, where "/var/www/html/catalog.wsgi" is the path to our wsgi application.
 
-## Setup Python Virtual Environment
+Copy the project folder or clone the project folder into Apache's default hosting directory which is ``` /var/www/html/ ``` 
+such that the final project directory path would be ``` /var/www/html/catalog/ ```
+
+## Setup Python and Python Virtual Environment
+To install python from terminal execute ``` $ sudo apt install python ```
+This will install the basic python packages on to your server.
+
+#### Setup python virtual environment
+virtualenv is a tool to create isolated Python environments. virtualenv creates a folder which contains all the necessary executables to use the packages that a Python project would need. We will be using this custom configuired virtualenv for our catalog falsk application
+
+Install python virtualenv with  ``` pip install virtualenv ```
+
+Lets create the python virtualenv within the project folder. To do this go to project folder and exceute the following 
+commands
+```
+$ cd /var/www/html/catalog/
+$ sudo virtualenv catalog
+```
+This will create a virtual python environment within the project folder that is named as ``` catalog ``
+Lets activate the virtualenv and you will get the shell prompt with vertualenv name (catalog)$
+```
+$ source catalog/bin/activate
+$ (catalog)$ 
+```
+Within the virtualenv we need to install all our ncessary pythin packages 
+''''
+
 
 
 ### Database
