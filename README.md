@@ -9,6 +9,7 @@ This project make use of Amazon Lightsail running ubuntu 16.04
 ### Linux Server configuration
  The setup will guide through the following steps.
  * Configure a user with sudo [root] permissions
+ * Key pair authentication 
  * Configure Firewall
  * Configure Apache
  * Setup Python Virtual Environment
@@ -27,6 +28,55 @@ add the below lines, save and exit the file editor'
 ```
 grader ALL=(ALL) NOPASSWD:ALL
 ```
+You can now login to the new user with the command
+```$ su grader ``` enter password and check for yourself if the user have sudo permissions.
+
+#### Key Pair authentication
+Its vital for any server to disable password based authentication for security.
+For this project we use key pair authentication method for added security.
+
+From your local linx machine run the following command to generate a keypair
+```$ ssh-keygen ```
+Enter the name when prompted for, make sure the path falls into your ```.ssh``` directory,
+this is mostly located inside your home directory, if it does not exist , please create one 
+using ``` mkdir .ssh ```
+
+Our final path would look like this for example .
+``` /home/clain/.ssh/userGrader ``` 
+for additional security you can add a password for the keyfile or leave empty for none.
+This will generate the keypair files inside our .ssh directory whiche are
+'userGrader' and 'userGrader.pub'
+
+From within the server terminal window, create a new directory .ssh
+```$ mkdir .ssh ``` and create a new file with touch command
+```$ touch .ssh/authorized_keys ```
+
+Ppen the file for editing ``` $sudo nano .ssh/authorized_keys ```  
+now copy the contents from 'userGrader.pub' file and paste it within the authorized_keys file
+save and exit.
+
+Set file permissions so that other users canot access it 
+```
+$ chmod 700 .ssh
+$ chmod 644 .ssh/authorized_keys
+```
+##### Disable SSH Password authentication
+For added security lets disable passwod based authentication within ssh, to do that lets edit the ssh config file
+```$sudo nano /etc/ssh/sshd_config ```
+find the entry that reads ``` PasswordAuthentication ``` and set it to ``` PasswordAuthentication no ```
+
+##### Change the default SSH port
+Change the default ssh port to say ``` 2200 ``` as a point of security measure.
+Within the same sshd_config file find the entry that reads ``` Port 22 ``` and change it to ``` Port 2200 ```
+save the file and exit. Seload the ssh service using ``` $ sudo service ssh restart ```
+
+##### Login using key pair
+login to the server using the following command
+```$ ssh grader@13.234.170.208 -p 2200 ```
+where "grader" is the user , "13.234.170.208" is the IP address of your server and "-p 2200" defines the ssh port.
+
+
+
 ### Vagrant
 
 Download your copy of vagrant from here. 
