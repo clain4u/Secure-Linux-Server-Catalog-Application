@@ -177,7 +177,7 @@ def login_required(f):
 # DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
-        # Only disconnect a connected user.
+    # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(
@@ -249,7 +249,7 @@ def categories():
     # joining using ForeignKey relationship to get parent category
     # reverse ordering by id to get the last 10 product entries
     products = session.query(Products).join(Category).order_by(
-            "Products.id desc").limit(10)
+               "id").limit(10)
     return render_template('home.html', categories=categories,
                            products=products, user=login_session)
 # ============== End of Application Home Page ===========
