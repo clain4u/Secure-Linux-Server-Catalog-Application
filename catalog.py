@@ -21,6 +21,7 @@ import requests
 import urllib
 
 app = Flask(__name__)
+app.secret_key = '\xd3\x97I\rd.`\xee\xfc\xf2\xdf\xf2'
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
@@ -544,7 +545,5 @@ def productViewJSON(product_id):
 
 
 if __name__ == '__main__':
-    app.secret_key = '\xd3\x97I\rd.`\xee\xfc\xf2\xdf\xf2'
     app.debug = True
-    print "Catalog app running at port:5000 Url- http://localhost:5000/catalog"
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
