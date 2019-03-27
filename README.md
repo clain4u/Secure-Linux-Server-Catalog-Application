@@ -364,7 +364,7 @@ To delete a product
 ## JSON EndPoints
 The catalog app provides read only endpoints for public, the endpoints are as follows
 #### Categories EndPoint
-```http://localhost:5000/catalog/categories/JSON```
+```http://13.234.170.208.xip.io/catalog/categories/JSON```
 This endpoint returns the list of available categories with the following fields
 * ID
 * Name
@@ -401,11 +401,11 @@ Below is the sample output for this request
 ```
 #### Category Products EndPoint
 **format**
-```http://localhost:5000/catalog/category/<Category_ID>/JSON```
+```http://13.234.170.208.xip.io/catalog/category/<Category_ID>/JSON```
 Note: Category_ID's can be fetched from the categories endpoint [see above]
 
 Example
-```http://localhost:5000/catalog/category/2/JSON```
+```http://13.234.170.208.xip.io/catalog/category/2/JSON```
 
 This endpoint returns the list of all products with the following fields within the requested category.
 * Name
@@ -436,11 +436,11 @@ Below is the sample output for this request
 ```
 #### Single Product EndPoint
 **format**
-```http://localhost:5000/catalog/product/<Product_ID>/JSON```
+```http://13.234.170.208.xip.io/catalog/product/<Product_ID>/JSON```
 Note: Product_ID can be fetched from the "Category Products" endpoint [see above]
 
 Example
-```http://localhost:5000/catalog/product/8/JSON```
+```http://13.234.170.208.xip.io/catalog/product/8/JSON```
 
 This endpoint returns the a single product with the following fields.
 * Name
