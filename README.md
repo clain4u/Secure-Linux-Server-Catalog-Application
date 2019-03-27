@@ -35,7 +35,7 @@ grader ALL=(ALL) NOPASSWD:ALL
 You can now login to the new user with the command
 ```$ su grader ``` enter password and check for yourself if the user have sudo permissions.
 
-#### Key Pair authentication
+#### Key Pair Authentication
 Its vital for any server to disable password based authentication for security.
 For this project we use key pair authentication method for added security.
 
@@ -64,7 +64,7 @@ Set file permissions so that other users canot access it
 $ chmod 700 .ssh
 $ chmod 644 .ssh/authorized_keys
 ```
-##### Disable SSH Password authentication
+##### Disable SSH Password Authentication
 For added security lets disable password based authentication within ssh, to do that lets edit the ssh config file
 ```$sudo nano /etc/ssh/sshd_config ```
 find the entry that reads ``` PasswordAuthentication ``` and set it to ``` PasswordAuthentication no ```
