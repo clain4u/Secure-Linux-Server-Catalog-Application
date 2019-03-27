@@ -54,7 +54,7 @@ class Products(Base):
         }
 
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql://grader:grader007@localhost/catalog')
 
 
 Base.metadata.create_all(engine)
