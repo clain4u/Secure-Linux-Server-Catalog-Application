@@ -219,18 +219,68 @@ the final config file will look like this
 ```
 Save and exit the editor.
 
+##### Configure Wsgi script handler [catalog.wsgi]
+We need to configure the catalog.wsgi file to load the python module and our catalog app.
+Edit catlog.wsgi ```$ sudo nano /var/www/html/catalog.wsgi ``` and add the following
 
+```
+import sys
+sys.path.insert(0, '/var/www/html/catalog')
+from catalog import app as application
+```
+Save and exit the editor.
 
-### Database
-This program makes use of SQLite database. Please find the sample database file 'catalog.db' in the project root folder.
-The sample is provided as it is to test the program or for a quick run, You are encouraged to delete the sample database and 
-make a fresh start after familiarizing with the application.
+**Restart Apache for the setting to take effect**
+```$ sudo service apache2 restart ```
 
-#### Database Setup 
+**Apache can be troublesome at times, and might need a force relaod if the restart did not work as expected**
+```$ sudo service apache2 force-reload```
 
-To setup a fresh database navigate to project root folder and run the "database_setup.py"
- ``` $ python database_setup.py ```
-This will create an empty database and makes the application ready for a fresh start.
+### Setup PostgreSQL Database
+This program makes use of PostgreSQL database. 
+Install postgreSQL
+```$ sudo apt-get install postgresql ```
+Once installed , create a new user[role] that would connect the catalog app with the database.
+```$ sudo -u postgres createuser --interactive  ```
+Enter the desired username, in our case let it be ```grader```
+You will be prompetd with ``` Shall the new role be a superuser? (y/n) ```
+enter ``` y ``` .
+
+No you have succesfully created the user. For you to login as a user the postgreSQL requires a database in the same username, login to posgreSQL
+```$ sudo -i -u postgres ```
+Create new database for "grader" user
+``` postgres@server:~$ createdb grader ```
+
+Since we have already created the user linux user "grader" we can now login to postgreSQL as "grader"
+``` $ sudo -i -u grader ```
+##### Catalog Database
+Once  logged as "grader" in  create new database catalog 
+``` 
+grader@server:~$ createdb catalog 
+```
+
+##### Setup password for grader user
+To setup password for the grader user execute the following steps
+
+Logg into posgreSQL
+```
+grader@server:~$ psql
+```
+From the query prompt execute
+```
+grader=# \password grader
+```
+You will be prompted to enter the password and confirm it
+```
+Enter new password: 
+Enter it again:
+```
+Now you are done with the database setup
+**Be sure to upadate the password in the connection string of "database_setup.py" and "catalog.py"**
+The database connection string would look like this, where grader is user and catlog is the database name.
+```
+create_engine('postgresql://grader:yourPassword@localhost/catalog')
+```
 
 ## Python Program 
 
