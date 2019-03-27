@@ -27,11 +27,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "The Catalog Application"
 
-# 'check_same_thread': False => avoids SQLAlchemy check same thread requests
-# althogh good at security point of view but was annoying while in a
-# developent environment, hence turing it off.
-engine = create_engine('sqlite:///catalog.db', connect_args={
-         'check_same_thread': False})
+engine = create_engine('postgresql://grader:grader007@localhost/catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
