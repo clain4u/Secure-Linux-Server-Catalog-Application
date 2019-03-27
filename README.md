@@ -1,11 +1,11 @@
-# Catalog-udacity
-A python flask application to implement an item catalog web application where user can read / write/ edit / delete items and provide provide read only JSON endpoints.
+# Secure Linux Server Catalog Application
+A python flask application hosted on a secure Linux server to implement an item catalog web application where user can read / write/ edit / delete items and provide provide read only JSON endpoints. 
 
 ### Prerequisites
 Linux Server [Ubuntu], Apache Python, PostgreSQL
 
 ## Getting Started
-This project make use of Amazon Lightsail running ubuntu 16.04
+This project make use of Amazon Lightsail running ubuntu 16.04 LTS
 ### Linux Server configuration
  The setup will guide through the following steps.
  * Configure a user with sudo [root] permissions
@@ -479,6 +479,7 @@ While these are the plans for the future, **I encourage the users to fork the pr
 ## Built With
 * [Python](https://www.python.org/)
 * [FLASK](http://flask.pocoo.org/)
+* [Apache](https://httpd.apache.org/)
 * [PostgreSQL](https://www.postgresql.org/)
 * [jQuery](https://jquery.com/)
 * [Bootstrap](https://getbootstrap.com/)
@@ -486,7 +487,7 @@ While these are the plans for the future, **I encourage the users to fork the pr
 
 ## Author
 
-Clain Dsilva - Catalog Udacity Project
+Clain Dsilva - Secure Linux Server Catalog Application
 
 ## License
 
