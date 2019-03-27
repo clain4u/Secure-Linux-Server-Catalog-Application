@@ -2,22 +2,31 @@
 A python flask application to implement an item catalog web application where user can read / write/ edit / delete items and provide provide read only JSON endpoints.
 
 ### Prerequisites
-
-Virtual Box, Vagrant, Python, SQLLite
-##### Internet connection [not a necessity ]
-The project uses third party icon libraries  and placeholder images to improve the user experience
-These requires an internet connection to connect to CDN and fetch the resources.
-**However these are not a necessity for the projects smooth function , the project works great offline**
+Linux Server [Ubuntu], Apache Python, PostgreSQL
 
 ## Getting Started
-To start with you need the virtual box installed.
-you can download and install virtual machine from here based on your choice of operating system.
+This project make use of Amazon Lightsail running ubuntu 16.04
+### Linux Server configuration
+ The setup will guide through the following steps.
+ * Configure a user with sudo [root] permissions
+ * Configure Firewall
+ * Configure Apache
+ * Setup Python Virtual Environment
+ * Setup PosgreSQL Database
 
-https://www.virtualbox.org/wiki/Download_Old_Builds_5_1
-
-Supported version of Virtual Box to install is version 5.1. 
-Newer versions do not work with the current release of Vagrant
-
+#### Configure User
+From the Amazon Lightsail terminal lets create new user with adduser command,
+lets the user be ``` grader ``` for example.
+```$ sudo adduser grader ```
+Enter the password and user details when prompted for.
+##### Add user to sudoers list
+Add the ```grader``` user  to sudoers list with the following command
+```sudo nano /etc/sudoers.d/grader```
+This will open up a new file that defines permissions for the user "grader",
+add the below lines, save and exit the file editor' 
+```
+grader ALL=(ALL) NOPASSWD:ALL
+```
 ### Vagrant
 
 Download your copy of vagrant from here. 
