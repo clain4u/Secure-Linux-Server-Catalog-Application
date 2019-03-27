@@ -171,8 +171,53 @@ Lets activate the virtualenv and you will get the shell prompt with vertualenv n
 $ source catalog/bin/activate
 $ (catalog)$ 
 ```
-Within the virtualenv we need to install all our ncessary pythin packages 
-''''
+Within the virtualenv we need to install all our ncessary python packages one by one
+```
+# Flask web framework
+(catalog)$ pip install flask 
+
+# Psycopg2 for Python-PostgreSQL database interaction
+(catalog)$ pip install psycopg2
+
+# Oauth2client Python library for accessing resources protected by OAuth 2.0 
+(catalog)$ pip install oauth2client
+
+# Requests is an HTTP library for Python
+(catalog)$ pip install requests
+
+# SQLAlchemy is an open-source SQL toolkit and object-relational mapper for the Python
+(catalog)$ pip install sqlalchemy
+```
+##### Udate apache config to use python virtualenv
+Update the apache config file to use the newly setup catlog virtulenv, to do that get the complete path of catalog virtualenv using the
+``` (catalog)$ pip --version ``` command returns full path of where pip is installed 
+this will return this
+``` pip 19.0.3 from /var/www/html/catalog/catalog/local/lib/python2.7/site-packages/pip (python 2.7) ```
+
+Copy the path upto "site-packages"
+``` /var/www/html/catalog/catalog/local/lib/python2.7/site-packages ```
+
+Open the apache config file for editing
+``` $ sudo nano /etc/apache2/sites-available/000-default.conf ```
+
+Add two entries to tell apache to use catalog virtualenv.
+``` 
+WSGIDaemonProcess catalog python-path=/var/www/html/catalog/catalog/local/lib/python2.7/site-packages
+WSGIProcessGroup catalog
+```
+
+Add these entries just above ``` WSGIScriptAlias / /var/www/html/catalog.wsgi ```
+the final config file will look like this 
+```
+<VirtualHost *:80>
+.... # other configurations 
+        WSGIDaemonProcess catalog python-path=/var/www/html/catalog/catalog/local/lib/python2.7/site-packages
+        WSGIProcessGroup catalog
+        WSGIScriptAlias / /var/www/html/catalog.wsgi
+</VirtualHost>
+
+```
+Save and exit the editor.
 
 
 
