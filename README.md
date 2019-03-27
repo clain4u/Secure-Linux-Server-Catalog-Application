@@ -134,33 +134,21 @@ To                         Action      From
 123 (v6)                   ALLOW       Anywhere (v6)
  ```
  
- 
+ ## Configure Apache Webserver
+ Lets begin with the installation
+ ```$ sudo apt-get install apache2 ```
+ This will install apache webserver and accessing your IP address from your browser should output the default apache server page, for exmaple ``` http://13.234.170.208 ```
 
-### Vagrant
+For the python to work on wsgi mode we need to install the mod-wsgi handler
+```$ sudo apt-get install libapache2-mod-wsgi ```
 
-Download your copy of vagrant from here. 
-https://www.vagrantup.com/downloads.html
-and install it based on the your choice of operating system.
+Now we need to configure apache to handle our wsgi application through wsgi module, for this edit the apache configuration file 
+``` $ sudo nano /etc/apache2/sites-enabled/000-default.conf ```
+and add the entry ``` WSGIScriptAlias / /var/www/html/catalog.wsgi ``` within the <VirtualHost *:80> right before closing
+the </VirtualHost>, where "/var/www/html/catalog.wsgi" is the path to our wsgi application.
 
-### Virtual machine [VM]
+## Setup Python Virtual Environment
 
-Download your copy of virtual machine from here 
-https://s3.amazonaws.com/video.udacity-data.com/topher/2018/April/5acfbfa3_fsnd-virtual-machine/fsnd-virtual-machine.zip
-
-or clone it from here 
-https://github.com/udacity/fullstack-nanodegree-vm
-
-Extract the fsnd-virtual-machine.zip
-
-From terminal change directory to "FSND-Virtual-Machine/vagrant"
-Start the VM with the command
- 
-```$ vagrant up```
-
-this will install the new Linux virtual machine.
-Once setup you can start vagrant with the following command
-
-```$ vagrant ssh```
 
 ### Database
 This program makes use of SQLite database. Please find the sample database file 'catalog.db' in the project root folder.
